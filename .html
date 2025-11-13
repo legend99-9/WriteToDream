@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dream Journal</title>
+  <!-- Google Fonts: Quicksand -->
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Quicksand', Arial, sans-serif;
+      background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+      color: #333;
+      min-height: 100vh;
+      transition: background 1s;
+      overflow-x: hidden;
+    }
+    .night {
+      background: linear-gradient(120deg, #232526 0%, #1c1b36 100%);
+      color: #f5f5f5;
+    }
+    header {
+      text-align: center;
+      padding: 2em 1em 1em 1em;
+      font-size: 2em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      background: transparent;
+    }
+    .clouds, .stars {
+      position: fixed;
+      width: 100vw;
+      height: 30vh;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 40px;
+      width: 120px;
+      height: 60px;
+      top: 20px;
+      left: 0;
+      animation: cloudmove 60s linear infinite;
+    }
+    .cloud:nth-child(2) {left: 300px; top: 80px; width: 90px; height: 40px; animation-delay: 15s;}
+    .cloud:nth-child(3) {left: 600px; top: 55px; width: 140px; height: 70px; animation-delay: 30s;}
+    @keyframes cloudmove {
+      from {left: -140px;}
+      to {left: 100vw;}
+    }
+    .stars {
+      top: 0; left: 0; height: 100vh;
+      z-index: 0; opacity: 0.4;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      width: 3px;
+      height: 3px;
+      animation: twinkle 2s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% {opacity: .8;}
+      50% {opacity: .25;}
+    }
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 650px;
+      margin: 3em auto;
+      background: rgba(255,255,255,0.7);
+      border-radius: 22px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+      padding: 2em;
+    }
+    .dream-form input, .dream-form textarea, .dream-form select {
+      width: 100%;
+      margin: .5em 0;
+      padding: .7em;
+      border-radius: 8px;
+      border: 1px solid #bbb;
+      font-size: 1em;
+      font-family: 'Quicksand', Arial, sans-serif;
+    }
+    .dream-form button {
+      padding: .7em 2em;
+      background: #a1c4fd;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background .3s;
+    }
+    .dream-form button:hover {
+      background: #c2e9fb;
+    }
+    .dream-gallery {
+      margin-top: 2em;
+    }
+    .dream-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      margin: 1em 0;
+      padding: 1em 1em 0.5em 1em;
+      position: relative;
+    }
+    .dream-card .reactions {
+      margin-top: 0.6em;
+    }
+    .dream-card .emoji-btn {
+      background: none;
+      border: none;
+      font-size: 1.3em;
+      cursor: pointer;
+      margin: 0 6px 0 0;
+      transition: transform .2s;
+    }
+    .dream-card .emoji-btn:hover {
+      transform: scale(1.3);
+    }
+    .dream-card .mood {
+      font-size: 1em;
+      padding: 2px 10px;
+      border-radius: 10px;
+      background: #c2e9fb;
+      color: #234;
+      margin: 0 0 0 12px;
+    }
+    .toggle-btn {
+      float: right;
+      margin-top: 3px;
+      background: #ffde96;
+      color: #333;
+      border: none;
+      border-radius: 16px;
+      padding: .4em 1em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background .3s;
+    }
+    .toggle-btn.night {
+      background: #546e7a;
+      color: #f5f5f5;
+    }
+    .encourage {
+      margin: 1.1em 0 0.1em 0;
+      padding: .6em 1em;
+      background: #fffbe3;
+      border-radius: 10px;
+      color: #417b5a;
+      font-weight: 700;
+      font-size: 1em;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    @media (max-width: 650px) {
+      .container { padding: 1em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="clouds">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+  <header>
+    Tonight’s Adventure Awaits  
+    <button class="toggle-btn" id="toggle-btn">Night Mode</button>
+  </header>
+  <div class="container">
+    <form class="dream-form" id="dreamForm">
+      <h2>Log Your Dream</h2>
+      <input type="text" id="dreamTitle" placeholder="Dream Title" required>
+      <textarea id="dreamStory" placeholder="Describe your dream..." required></textarea>
+      <input type="date" id="dreamDate" required>
+      <select id="dreamMood">
+        <option value="">Select mood</option>
+        <option value="😊 Happy">😊 Happy</option>
+        <option value="🌟 Adventure">🌟 Adventure</option>
+        <option value="😱 Scary">😱 Scary</option>
+        <option value="😂 Funny">😂 Funny</option>
+        <option value="😕 Confusing">😕 Confusing</option>
+        <option value="✈️ Flying">✈️ Flying</option>
+        <option value="🎶 Musical">🎶 Musical</option>
+        <option value="💕 Romantic">💕 Romantic</option>
+      </select>
+      <button type="submit">Add Dream</button>
+      <div class="encourage" id="encourageMsg">Write a new dream—your imagination matters!</div>
+    </form>
+
+    <section class="dream-gallery" id="dreamGallery">
+      <h2>Dream Gallery</h2>
+      <!-- Sample dreams -->
+      <div class="dream-card">
+        <b>Sky Lantern Parade</b> <span style="float:right;">2025-11-12</span>
+        <span class="mood">🌟 Adventure</span>
+        <p>A parade of lanterns floats through the night sky, lighting up dark clouds with laughter...</p>
+        <div class="reactions">
+          <button class="emoji-btn" title="Love">❤️ <span class="count">0</span></button>
+          <button class="emoji-btn" title="Wow">✨ <span class="count">0</span></button>
+          <button class="emoji-btn" title="Haha">😂 <span class="count">0</span></button>
+        </div>
+      </div>
+      <div class="dream-card">
+        <b>Talking Cat Café</b> <span style="float:right;">2025-11-10</span>
+        <span class="mood">😂 Funny</span>
+        <p>Cats in hats serve magic tea and riddles, turning every sip into a new adventure.</p>
+        <div class="reactions">
+          <button class="emoji-btn" title="Love">❤️ <span class="count">0</span></button>
+          <button class="emoji-btn" title="Wow">✨ <span class="count">0</span></button>
+          <button class="emoji-btn" title="Haha">😂 <span class="count">0</span></button>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    // NIGHT MODE TOGGLE
+    const toggleBtn = document.getElementById('toggle-btn');
+    toggleBtn.addEventListener('click', function() {
+      document.body.classList.toggle('night');
+      toggleBtn.classList.toggle('night');
+      toggleBtn.textContent = document.body.classList.contains('night') ? 'Day Mode' : 'Night Mode';
+    });
+
+    // STAR BACKGROUND GENERATOR
+    function createStars() {
+      const stars = document.getElementById('stars');
+      stars.innerHTML = '';
+      for (let i = 0; i < 70; i++) {
+        let star = document.createElement('div');
+        star.className = 'star';
+        star.style.top = (Math.random()*100) + 'vh';
+        star.style.left = (Math.random()*100) + 'vw';
+        stars.appendChild(star);
+      }
+    }
+    createStars();
+
+    // Encouraging Messages
+    const messages = [
+      "Amazing! Your dreams bring color to the world.",
+      "Another adventure added! Keep dreaming.",
+      "Your creativity is endless—wonderful dream!",
+      "Every dream is unique. Thanks for sharing.",
+      "No dream is too small to matter.",
+      "Imagination grows when shared!"
+    ];
+
+    // DREAMS - FORM SUBMIT
+    document.getElementById('dreamForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const title = document.getElementById('dreamTitle').value;
+      const story = document.getElementById('dreamStory').value;
+      const date = document.getElementById('dreamDate').value;
+      const mood = document.getElementById('dreamMood').value;
+      if(title && story && date && mood){
+        const gallery = document.getElementById('dreamGallery');
+        const div = document.createElement('div');
+        div.className = 'dream-card';
+        div.innerHTML = `<b>${title}</b> <span style="float:right;">${date}</span>
+          <span class="mood">${mood}</span>
+          <p>${story}</p>
+          <div class="reactions">
+            <button class="emoji-btn" title="Love">❤️ <span class="count">0</span></button>
+            <button class="emoji-btn" title="Wow">✨ <span class="count">0</span></button>
+            <button class="emoji-btn" title="Haha">😂 <span class="count">0</span></button>
+          </div>`;
+        gallery.appendChild(div);
+        // Attach reaction event listeners
+        attachEmojiListeners(div);
+        // Encouragement message
+        document.getElementById('encourageMsg').textContent = messages[Math.floor(Math.random()*messages.length)];
+        // Clear form
+        document.getElementById('dreamTitle').value = '';
+        document.getElementById('dreamStory').value = '';
+        document.getElementById('dreamDate').value = '';
+        document.getElementById('dreamMood').value = '';
+      }
+    });
+
+    // Emoji Reaction Button Logic
+    function attachEmojiListeners(card) {
+      const buttons = card.querySelectorAll('.emoji-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const countSpan = btn.querySelector('.count');
+          countSpan.textContent = parseInt(countSpan.textContent) + 1;
+        });
+      });
+    }
+    // Attach to demo cards too:
+    document.querySelectorAll('.dream-card').forEach(attachEmojiListeners);
+  </script>
+</body>
+</html>
